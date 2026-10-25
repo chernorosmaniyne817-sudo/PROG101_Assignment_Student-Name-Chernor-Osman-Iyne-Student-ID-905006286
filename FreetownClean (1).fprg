@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<flowgorithm fileversion="3.0">
+    <attributes>
+        <attribute name="name" value="FreetownClean"/>
+        <attribute name="authors" value="Chernor"/>
+        <attribute name="about" value="FreetownClean: waste reporting, priority scoring and daily truck scheduling"/>
+        <attribute name="saved" value="2026-10-15 08:30:00 PM"/>
+    </attributes>
+    <function name="Main" type="None" variable="">
+        <parameters/>
+        <body>
+            <declare name="location" type="String" array="False" size=""/>
+            <declare name="priority" type="String" array="False" size=""/>
+            <declare name="another" type="String" array="False" size=""/>
+            <declare name="severity" type="Integer" array="False" size=""/>
+            <declare name="daysWaiting" type="Integer" array="False" size=""/>
+            <declare name="repeatReports" type="Integer" array="False" size=""/>
+            <declare name="score" type="Integer" array="False" size=""/>
+            <declare name="high" type="Integer" array="False" size=""/>
+            <declare name="medium" type="Integer" array="False" size=""/>
+            <declare name="low" type="Integer" array="False" size=""/>
+            <declare name="total" type="Integer" array="False" size=""/>
+            <declare name="trucks" type="Integer" array="False" size=""/>
+            <declare name="capacity" type="Integer" array="False" size=""/>
+            <declare name="dailyCapacity" type="Integer" array="False" size=""/>
+            <declare name="collected" type="Integer" array="False" size=""/>
+            <declare name="backlog" type="Integer" array="False" size=""/>
+            <assign variable="high" expression="0"/>
+            <assign variable="medium" expression="0"/>
+            <assign variable="low" expression="0"/>
+            <assign variable="total" expression="0"/>
+            <assign variable="another" expression="&quot;Y&quot;"/>
+            <output expression="&quot;FreetownClean: Waste Reporting and Truck Scheduling&quot;" newline="True"/>
+            <while expression="another == &quot;Y&quot;">
+                    <output expression="&quot;Enter location of waste report&quot;" newline="True"/>
+                    <input variable="location"/>
+                    <output expression="&quot;Enter severity (1 to 5)&quot;" newline="True"/>
+                    <input variable="severity"/>
+                    <output expression="&quot;Enter days the waste has waited&quot;" newline="True"/>
+                    <input variable="daysWaiting"/>
+                    <output expression="&quot;Enter number of repeat reports&quot;" newline="True"/>
+                    <input variable="repeatReports"/>
+                    <if expression="severity &lt; 1 Or severity &gt; 5">
+                        <then>
+                            <output expression="&quot;Invalid severity. Report rejected.&quot;" newline="True"/>
+                        </then>
+                        <else>
+                            <assign variable="score" expression="severity * 3 + daysWaiting * 2 + repeatReports"/>
+                            <if expression="score &gt;= 20">
+                                <then>
+                                    <assign variable="priority" expression="&quot;High&quot;"/>
+                                    <assign variable="high" expression="high + 1"/>
+                                </then>
+                                <else>
+                                    <if expression="score &gt;= 10">
+                                        <then>
+                                            <assign variable="priority" expression="&quot;Medium&quot;"/>
+                                            <assign variable="medium" expression="medium + 1"/>
+                                        </then>
+                                        <else>
+                                            <assign variable="priority" expression="&quot;Low&quot;"/>
+                                            <assign variable="low" expression="low + 1"/>
+                                        </else>
+                                    </if>
+                                </else>
+                            </if>
+                            <assign variable="total" expression="total + 1"/>
+                            <output expression="location &amp; &quot; - &quot; &amp; priority &amp; &quot; priority (score &quot; &amp; score &amp; &quot;)&quot;" newline="True"/>
+                        </else>
+                    </if>
+                    <output expression="&quot;Add another report? (Y/N)&quot;" newline="True"/>
+                    <input variable="another"/>
+            </while>
+            <output expression="&quot;Enter number of trucks available today&quot;" newline="True"/>
+            <input variable="trucks"/>
+            <output expression="&quot;Enter stops each truck can collect&quot;" newline="True"/>
+            <input variable="capacity"/>
+            <assign variable="dailyCapacity" expression="trucks * capacity"/>
+            <if expression="total &gt; dailyCapacity">
+                <then>
+                    <assign variable="collected" expression="dailyCapacity"/>
+                    <assign variable="backlog" expression="total - dailyCapacity"/>
+                </then>
+                <else>
+                    <assign variable="collected" expression="total"/>
+                    <assign variable="backlog" expression="0"/>
+                </else>
+            </if>
+            <output expression="&quot;High priority: &quot; &amp; high &amp; &quot;, Medium: &quot; &amp; medium &amp; &quot;, Low: &quot; &amp; low" newline="True"/>
+            <output expression="&quot;Stops scheduled today (High first): &quot; &amp; collected" newline="True"/>
+            <output expression="&quot;Backlog carried to next day: &quot; &amp; backlog" newline="True"/>
+        </body>
+    </function>
+</flowgorithm>
